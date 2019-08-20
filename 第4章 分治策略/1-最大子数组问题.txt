@@ -1,0 +1,69 @@
+# 找出跨越中点的最大子数组
+find_max_crossing_subarray(A, low, mid, high)
+    left_sum = -infinite
+    sum = 0
+    for i=mid downto low        # 找到mid到low的最大组合和
+        sum = sum + A[i]
+        if sum > left_sum
+            left_sum = sum
+            max_left = i        # 最大子数组的左边界
+            
+    right_sum = -infinite   
+    sum = 0
+    for i = mid+1 to high       # 找到mid+1到high的最大组合和
+        sum = sum +A[i]
+        if sum > right_sum
+            right_sum = sum
+            max_right = i       # 最大子数组的右边界
+            
+    return (max_left, max_right, left_sum+right_sum)
+            
+   
+# 最大子数组问题的解决方案：分治法  O(nlgn)
+find_maximum_subarray(A, low, high)
+    if high == low                      # 基本情况
+        return (low, high, A[low])      # 划分子数组
+    else mid == int((low+high)/2)       # 递归情况(int在这里当做是向下取整)
+        (left_low, left_high, left_sum) = find_maximum_subarray(A, low, mid)                    # 左边的最大子数组
+        (right_low, right_high, right_sum) = find_maximum_subarray(A, mid+1, heigh)             # 右边的最大子数组
+        
+        (cross_low, cross_high, cross_sum) = find_max_crossing_subarray(A, low, mid, high)      # 跨中点的最大子数组，此非原问题的规模更小实例，故看做合并部分
+        if left_sum >= right_sum and right_sum >= cross_sum
+            return (left_low, left_high, left_sum)
+        elif right_sum >= left_sum and right_sum >= cross_sum
+            return (right_low, right_high, right_sum)
+        else
+            return (cross_low, cross_high, cross_sum)
+            
+            
+########################################################################################
+# 最大子数组问题的解决方案：暴力算法 O(n²)
+find_maxsum_subarray(A)
+    start = 1
+    end = 1
+    max_sum = A[1]      # A[i]代表A中第i个元素
+    length = len(A)
+    for i=1 to length
+        sum = A[i]
+        start_i = i
+        end_i = i
+        max_sum_temp = A[i]
+        for j=i+1 to length
+            sum = sum + A[j]
+            if sum > max_sum_temp
+                max_sum_temp = sum
+                end_i = j
+        if max_sum < max_sum_temp
+            max_sum = max_sum_temp
+            start =start_i
+            end = end_i
+    return (start, end, max_sum)
+    
+思考：暴力算法和分治算法存在一个性能交叉点，可以尝试把分治法的基本情况使用暴力算法来解决，性能交叉点是否会改变？
+
+
+#############################################################################################################
+# 最大子数组问题的解决方案：非递归、线性时间的算法
+# 思路：从数组的左边界开始，由左至右处理，记录目前为止已经处理过的最大子数组，若已知A[1...j]的最大子数组，
+基于性质：A[1...j+1]的最大子数组要么是A[1...j]的最大子数组，要么是A[i...j+1](1<=i<=j+1)
+
