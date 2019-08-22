@@ -1,0 +1,83 @@
+# ---------------------维护堆的性质----------------------
+# max_heapify:时间复杂度为O(lgn),用于维护最大堆性质。
+# 输入时A和i，在调用时假定根节点为left[i]和right[i]的二叉树都是最大堆，但A[i]可能小于其孩子。
+# max_heapify通过让A[i]的值在最大堆中“逐级下降”，从而使得以下标i为根节点的子树重新遵循最大堆的性质。
+max_heapify(A, i)
+    l = left(i)     # 左孩子下标
+    r = right(i)    # 右孩子下标
+    if l <= A.heap_size and A[l] > A[i]     # 这里A.heap_size为堆的元素个数，A是一个用来存放此堆分数组
+        largest = l
+    else
+        largest = i
+    if r <= A.heap_size and A[r] > A[largest]
+        largest = r
+    if largest != i
+        exchange A[i] with A[largest]       # 互换值
+        max_heapify(A, largest)
+        
+# 我的1
+max_heapify(A, i)
+    l = left(i)     # 左孩子下标
+    r = right(i)    # 右孩子下标
+    largest = i                          # 或者largest=l,
+    if r <= A.heap_size
+        largest = max(A[l], A[r])        # 假设max()获取的是较大者的下标
+    elif l <= A.heap_size
+        largest = l
+    if A[largest] > A[i]
+        exchange A[i] with A[largest]
+        max_heapify(A, largest)   
+        
+# 我的2 
+max_heapify(A, i)   # 假设数组A中后面部分未存放堆元素的初始值为 -infinite（反正就是一极小的值）
+    l = left(i)     # 左孩子下标
+    r = right(i)    # 右孩子下标
+    largest = l                          # 或者largest=l,
+    if A[largest] < A[r]
+        largest = r
+    if A[largest] > A[i]
+        exchange A[i] with A[largest]
+        max_heapify(A, largest)   
+
+
+# ---------------------建堆（O(n)）--------------------
+build_max_heap(A)                       # 目的：把一个大小为n=A.length的数组A[1...n]转换为最大堆
+    A.heap_size = A.length
+    for i = int(A.length/2) downto 1    # 向下取整，A[int(n/2)]是最后一个非叶子节点（这里n=A.length）
+        max_heapify(A, i)
+# 说明：上面是自底向上，由练习 6.1.7知子数组A[int(n/2)+1...n]中元素都是树的叶节点，每个叶节点都可以看成只包含一个元素的堆
+
+
+# ---------------------堆排序算法(O(nlgn))---------------------------
+heapsort(A)
+    build_max_heap(A)                   # 首先生成大根堆  O(n)
+    for i = A.length downto 2           
+        exchange A[1] with A[i]         # 然后将根移到堆的最尾，
+        A.heap_size = A.heap_size -1    # 再“断掉”这个尾，
+        max_heapify(A, 1)               # 重新维护好大根堆  O(lgn)
+    # 综上数组A就变成有序的了，
+    # 在这里也看到了过程max_heapify(A, i)中判断A.heap_size 存在及大小的重要性，所以我自己写的用到这里来排序还需修改
+    
+# 我的：可能出现下标越界
+heap_sort(A)
+    build_max_heap(A)
+    for i=2 to A.length     # 可用 while A.heap_size > 1 代替这里的for
+        exchange A[1] with A[A.heap_size]
+        A.heap_size = A.heap_size - 1
+        max_heapify(A, 1)
+        
+# -----用插入的方法建堆-----O(nlgn)
+build_max_heap_by_insert(A)
+    A.heap_size = 1
+    for i=2 to A.length
+        max_heap_insert(A, A[i])
+        
+# 两种建堆时间复杂度不同：自底向上for循环次数是从最后一个分叶子到根，而自顶向下是从2到最后一个元素
+
+
+
+
+
+
+
+
