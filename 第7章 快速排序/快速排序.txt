@@ -1,0 +1,80 @@
+"""
+最坏时间：O(n²)
+平均时间：O(nlgn)
+@任何一种常数比例的划分都会产生深度为Θ(lgn)的递归树，其中每一层的时间代价都是O(n)，因此，只要划分是常数比例的，算法的运行时间都是O(nlgn)
+三步分治过程：
+分解：数组A[p..r]被划分为两个（可以空）子数组，A[p..q-1]和A[q+1..r]，使得前一部分元素都不大于A[q]，后一部分元素都不小于A[q]，计算下标q也是划分过程的一部分
+解决：通过递归调用快速排序，对数组A[p..q-1]和A[q+1..r]进行排序
+合并：子数组都是原址的所以不需要合并操作，数组A[p..r]已经是有序
+"""
+# 快速排序
+quick_sort(A, p, r)     # 排序数组A时p=1, r=len(A),这里假设数组下标从1开始
+    if p < r
+        q = partition(A, p, r)
+        quick_sort(A,p,q-1)
+        quick_sort(A, q+1, r)
+
+
+# 数组的划分(快速排序的关键步骤),它实现了对数组A的原址重排
+@将数组划分为四块（可以为空）：A--不大于枢纽的地盘（部分），B--大于枢纽的地盘（部分），C--待(未)划分地盘（未知领域），D--枢纽的地盘
+partition(A, p, r)
+    x = A[r]                             # 把最后一个元素当枢纽
+    i = p-1                              # 刚开始还未划分，所以只能给不大于枢纽部分一个空地盘（不存在的）
+    for j=p to r-1                       # <=i部分为不大于枢纽的地盘，i+1到j-1为大于枢纽的地盘，j为正在划分的地盘。r为枢纽的地盘
+        if A[j] <= x                     # 如果此值不大于枢纽，就把小于枢纽的部分增大单位1，于是i=i+1
+            i = i+1                      # 就是说把之前的未知领域（为划分的部分）划分1给不大于枢纽部分
+            exchange A[i] with A[j]
+    exchange A[i+1] with A[r]            # 最后把枢纽放到中间地带（i+1处），把原枢纽的地盘分给大于枢纽的部分（互换）。
+    # 到这里地盘划分已完成，结果是：A为p到i,B为i+2到r,D为i+1(枢纽)，C为空（都被瓜分了）
+    return i+1                           # 返回枢纽位置
+
+
+# 数组的划分（数据结构书中）
+partition(A, low, high)
+    p = low 
+    q = high
+    x = A[low]
+    while p < q
+        while p < q and x <= A[q]
+            q--
+        A[p] = A[q]     # 把小的移到低位
+        whi p < q and x >= A[p]
+            p++
+        A[q] = A[p]     # 把大的移到高位
+    A[p] = x
+    return p
+    
+    
+# 练习7.1-2:修改PARTITION，使得当数组A[p..r]中所有元素的值都相同时，q=int((p+r)/2).
+@解答博客地址：https://blog.csdn.net/z84616995z/article/details/18046845
+partition(A, p, r)
+    x = A[r]
+    i = p-1
+    flag = 1
+    for j=p to r-1
+        if x >= A[j] and flag > 0
+            i = i+1
+            exchange A[i] with A[j]
+        if A[i] == x
+            flag = -flag        # 这样使i++次数减半
+    exchange A[i+1] with A[r]
+    return i+1
+    
+# 思考：上面的只能针对所以值相同时这类，所以用于其他的必然排序失败于是改为如下
+partition(A, p, r)
+    x = A[r]
+    i = p-1
+    flag = 1
+    for j=p to r-1
+        if x > A[j] 
+            i = i+1
+            exchange A[i] with A[j]
+        elif x == A[j] and flag % 2 == 0
+            i = i+1
+            exchange A[i] with A[j]
+        else
+            continue
+        flag = flag+1
+    exchange A[i+1] with A[r]
+    return i+1
+    

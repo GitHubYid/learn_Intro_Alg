@@ -1,0 +1,26 @@
+# 采用随机抽样的随机化技术，
+# 与始终采用A[r]作为主元不同，随机抽烟是从子数组A[p..r]中随机选择一个元素作为主元
+# 为达到此目的，首先将A[r]与从A[p..r]中随机抽选出的一个元素交换
+# 通过对序列p..r的随机抽样，可以保证主元素x=A[r]是等概率地从子数组的r-p+1个元素中选取的
+random_partition(A, q, r)
+    i = random(q, r)
+    exchange A[i] with A[r]
+    return partition(A, q, r)
+    
+random_quick_sort(A, p, r)
+    if p < r
+        q = random_partition(A, q, r)
+        random_quick_sort(A, p, q-1)
+        random_quick_sort(A, q+1, r)
+    
+    
+ # 使用循环来代替quick_sort中的第二个递归：尾递归技术
+ tail_recursive_quick_sort(A, p, r)
+    while p < r
+        q = partition(A, p, r)
+        tail_recursive_quick_sort(A, p, q-1)
+        p = q+1
+        
+
+# 三数取中划分：一种改进的random_quick_sort的方法是在划分时，从子数组中更细致地选择作为主元的元素
+# 常用做法是三数取中法：从数组中随机取出三个元素，取其中位数作为主元
