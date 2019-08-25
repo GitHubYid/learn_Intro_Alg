@@ -1,0 +1,48 @@
+# ------------计数排序-----------------
+# 假设：输入一个数组A[1..n]，A.length=n；数组B[1..n]存放排序的输出，C[0..k]提供临时存储空间
+counting_sort(A, B, k)
+    let C[0..k] be a new array  # 注意这里数组C存在0号元素哦
+    for i=0 to k
+        C[i]=0                  # 初始化数组C，值全为0
+        
+    for j=1 to A.length         # 遍历每一个输入元素，如果其值为i，就将C[i]加1
+        C[A[j]] = C[A[j]]+1     # C[i]最终保存了A数组元素i的个数
+        
+    for i=1 to k
+        C[i] = C[i]+C[i-1]      # C[i]最终存放的是有多少个元素是小于或等于i(或者i的序号)
+        
+    for j=A.length downto 1     # 这样使得排序是稳定的，若是j=1 to A.length那么就是不稳定的，但结果仍然正确
+        B[C[A[j]]] = A[j]
+        C[A[j]] = C[A[j]]-1     # 这使得下次遇到相同元素时就排到它的下一位置
+        
+
+# -------------基数排序------------------
+# 假设：n个d位的元素存放在数组A中，其中第一位是最低位，第d位是最高位
+radix_sort(A, d)
+    for i=1 to d
+        use a stable sort to sort array A on digit i    # 使用一个稳定排序来排序每位
+
+# 应用：使用基数排序对具有多个关键字域的记录进行排序。
+# 如日期（年月日）,可以使用特殊的比较函数的排序算法：给定两日期，先比较年，若同，再比较月，若同，就比较日
+# 也可以使用一种稳定排序算法对这些信息进行三次排序，先日，再月，最后是年
+
+# ---------------桶排序-----------------
+# 假设：输入的是一个包含n个元素的数组A，且每个元素A[i]满足0<=A[i]<1,
+# 此外算法还需要一个临时数组B[0...n-1]来存放链表（即桶），且假设存在一种用于维护这些链表的机制
+bucket_sort(A)
+    n = A.length
+    let B[0..n-1] be a new array
+    for i=0 to n-1
+        make B[i] an empty list     # 使B[i]为一个空链表
+    
+    for i=1 to n
+        insert A[i] into list B[int(nA[i])]
+        
+    for i=0 to n-1
+        sort list B[i] with insertion sort
+        
+    concatenate the lists B[0], B[1], ..., B[n-1] together in order
+    
+# 即使输入数据不服从均匀分布，桶排序仍然可以在线性时间内完成。
+# 只要输入数据满足：所有桶的大小的平方和与总的元素数呈线性关系，
+# 那么通过公式（8.1），我们就可以知道：桶排序仍然能在线性时间完成
